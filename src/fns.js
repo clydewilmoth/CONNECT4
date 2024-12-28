@@ -12,16 +12,17 @@ export function putChip(
         mem[row][col] = "red";
         setColorBoard(mem);
         setCurrentPlayer("yellow");
-        return row;
+        return [true, row];
       } else {
         let mem = colorBoard;
         mem[row][col] = "yellow";
         setColorBoard(mem);
         setCurrentPlayer("red");
-        return row;
+        return [true, row];
       }
     }
   }
+  return [false, null];
 }
 
 export function checkWin(row, col, colorBoard, currentPlayer) {
@@ -74,5 +75,32 @@ export function checkWin(row, col, colorBoard, currentPlayer) {
     return true;
   } else {
     return false;
+  }
+}
+
+export function clickHandler(col, params) {
+  const [worked, currentChip] = putChip(
+    col,
+    params.colorBoard,
+    params.currentPlayer,
+    params.setColorBoard,
+    params.setCurrentPlayer
+  );
+  if (worked) {
+    params.setMessage("");
+    params.setTurns(params.turns + 1);
+
+    const win = checkWin(currentChip, col, params.colorBoard, params.currentPlayer);
+
+    if (win) {
+      params.setMessage(params.currentPlayer + " wins!");
+      params.setGameOver(true);
+
+    } else if (params.turns === 42) {
+      params.setMessage("draw!");
+      params.setGameOver(true);
+    }
+  } else {
+    params.setMessage("column is full!");
   }
 }

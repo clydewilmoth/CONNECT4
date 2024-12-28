@@ -1,35 +1,38 @@
 import { useState } from "react";
-import { checkWin, putChip } from "./fns";
+import { clickHandler } from "./fns";
 
-let [getColorBoard, setColorBoard] = [null, null];
-let [getGameOver, setGameOver] = [null, null];
-let [getCurrentPlayer, setCurrentPlayer] = [null, null];
-let [getMessage, setMessage] = [null, null];
+let params = {};
 
 export default function App() {
-  const [colorBoard, sColorBoard] = useState(
+  const [colorBoard, setColorBoard] = useState(
     Array.from(Array(6), () => new Array(7).fill("white"))
   );
-  getColorBoard = colorBoard;
-  setColorBoard = sColorBoard;
+  params.colorBoard = colorBoard;
+  params.setColorBoard = setColorBoard;
 
-  const [gameOver, sGameOver] = useState(false);
-  getGameOver = gameOver;
-  setGameOver = sGameOver;
+  const [gameOver, setGameOver] = useState(false);
+  params.gameOver = gameOver;
+  params.setGameOver = setGameOver;
 
-  const [currentPlayer, sCurrentPlayer] = useState("red");
-  getCurrentPlayer = currentPlayer;
-  setCurrentPlayer = sCurrentPlayer;
+  const [currentPlayer, setCurrentPlayer] = useState("red");
+  params.currentPlayer = currentPlayer;
+  params.setCurrentPlayer = setCurrentPlayer;
 
-  const [message, sMessage] = useState("");
-  getMessage = message;
-  setMessage = sMessage;
+  const [message, setMessage] = useState("");
+  params.message = message;
+  params.setMessage = setMessage;
+
+  const [turns, setTurns] = useState(1);
+  params.turns = turns;
+  params.setTurns = setTurns;
+
+
 
   return (
     <>
       <h1>CONNECT4</h1>
       <Board />
-      <p>{getMessage}</p>
+      <p>{params.message}</p>
     </>
   );
 }
@@ -41,22 +44,7 @@ function Field({ row, col, backgroundColor, disabled }) {
       row={row}
       col={col}
       style={backgroundColor}
-      onClick={() => {
-        let currentChip = putChip(
-          col,
-          getColorBoard,
-          getCurrentPlayer,
-          setColorBoard,
-          setCurrentPlayer
-        );
-
-        let win = checkWin(currentChip, col, getColorBoard, getCurrentPlayer);
-
-        if (win) {
-          setMessage(getCurrentPlayer + " wins!");
-          setGameOver(true);
-        }
-      }}
+      onClick={() => clickHandler(col, params)}
       disabled={disabled}
     >
       &nbsp;
@@ -65,7 +53,7 @@ function Field({ row, col, backgroundColor, disabled }) {
 }
 
 function Board() {
-  var fields = getColorBoard.map((subarr, row) =>
+  var fields = params.colorBoard.map((subarr, row) =>
     subarr.map((color, col) => {
       return (
         <Field
@@ -73,7 +61,7 @@ function Board() {
           row={row}
           col={col}
           backgroundColor={{ backgroundColor: color }}
-          disabled={row === 0 ? getGameOver : true}
+          disabled={row === 0 ? params.gameOver : true}
         />
       );
     })
