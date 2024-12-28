@@ -26,12 +26,13 @@ async function putChip(
 }
 
 async function checkWin(colorBoard, setColorBoard, currentPlayer) {
-
   const mem = colorBoard;
 
   for (let row = 0; row <= 5; row++) {
     for (let col = 0; col <= 6; col++) {
-      if (row <= 2 && mem[row][col] === currentPlayer &&
+      if (
+        row <= 2 &&
+        mem[row][col] === currentPlayer &&
         mem[row + 1][col] === currentPlayer &&
         mem[row + 2][col] === currentPlayer &&
         mem[row + 3][col] === currentPlayer
@@ -41,7 +42,9 @@ async function checkWin(colorBoard, setColorBoard, currentPlayer) {
         }
         await setColorBoard(mem);
         return true;
-      } else if (col <= 3 && mem[row][col] === currentPlayer &&
+      } else if (
+        col <= 3 &&
+        mem[row][col] === currentPlayer &&
         mem[row][col + 1] === currentPlayer &&
         mem[row][col + 2] === currentPlayer &&
         mem[row][col + 3] === currentPlayer
@@ -51,7 +54,10 @@ async function checkWin(colorBoard, setColorBoard, currentPlayer) {
         }
         await setColorBoard(mem);
         return true;
-      } else if (row <= 2 && col <= 3 && mem[row][col] === currentPlayer &&
+      } else if (
+        row <= 2 &&
+        col <= 3 &&
+        mem[row][col] === currentPlayer &&
         mem[row + 1][col + 1] === currentPlayer &&
         mem[row + 2][col + 2] === currentPlayer &&
         mem[row + 3][col + 3] === currentPlayer
@@ -61,7 +67,10 @@ async function checkWin(colorBoard, setColorBoard, currentPlayer) {
         }
         await setColorBoard(mem);
         return true;
-      } else if (row <= 2 && col <= 3 && mem[row][col + 3] === currentPlayer &&
+      } else if (
+        row <= 2 &&
+        col <= 3 &&
+        mem[row][col + 3] === currentPlayer &&
         mem[row + 1][col + 2] === currentPlayer &&
         mem[row + 2][col + 1] === currentPlayer &&
         mem[row + 3][col] === currentPlayer
@@ -76,12 +85,11 @@ async function checkWin(colorBoard, setColorBoard, currentPlayer) {
   }
 
   return false;
-
 }
 
 function botChoice(colorBoard) {
   while (true) {
-    const rand = Math.floor(Math.random() * 7)
+    const rand = Math.floor(Math.random() * 7);
     if (colorBoard[0][rand] === "white") {
       return rand;
     }
@@ -89,32 +97,36 @@ function botChoice(colorBoard) {
 }
 
 export async function clickHandlerTurn(col, params) {
-
   const iMax = params.gamemode === 1 ? 2 : 1;
 
   for (let i = 0; i < iMax; i++) {
-
     const memCurrentPlayer = params.currentPlayer;
 
-    const worked = i === 0 ?
-      await putChip(
-        col,
-        params.colorBoard,
-        params.currentPlayer,
-        params.setColorBoard,
-        params.setCurrentPlayer
-      ) : await putChip(
-        botChoice(params.colorBoard),
-        params.colorBoard,
-        params.currentPlayer,
-        params.setColorBoard,
-        params.setCurrentPlayer
-      );
+    const worked =
+      i === 0
+        ? await putChip(
+            col,
+            params.colorBoard,
+            params.currentPlayer,
+            params.setColorBoard,
+            params.setCurrentPlayer
+          )
+        : await putChip(
+            botChoice(params.colorBoard),
+            params.colorBoard,
+            params.currentPlayer,
+            params.setColorBoard,
+            params.setCurrentPlayer
+          );
 
     if (worked) {
       await params.setMessage("");
 
-      const win = await checkWin(params.colorBoard, params.setColorBoard, memCurrentPlayer);
+      const win = await checkWin(
+        params.colorBoard,
+        params.setColorBoard,
+        memCurrentPlayer
+      );
 
       await params.setTurns(params.turns + 1);
 
@@ -124,11 +136,10 @@ export async function clickHandlerTurn(col, params) {
         await params.setGameOver(true);
         await params.setCurrentPlayer("red");
         break;
-
       } else if (params.turns === 42) {
         await params.setMessage("draw!");
         await params.setGameOver(true);
-        await params.setCurrentPlayer("red")
+        await params.setCurrentPlayer("red");
         break;
       }
     } else {
@@ -136,8 +147,6 @@ export async function clickHandlerTurn(col, params) {
       break;
     }
   }
-
-
 }
 
 export function clickHandlerRestart(params) {
@@ -150,4 +159,12 @@ export function clickHandlerRestart(params) {
 export function clickHandlerGamemode(params, gamemode) {
   params.setMenu(false);
   params.setGamemode(gamemode);
+}
+
+export function clickHandlerReturn(params) {
+  params.setMenu(true);
+  params.setTurns(0);
+  params.setGameOver(false);
+  params.setColorBoard(Array.from(Array(6), () => new Array(7).fill("white")));
+  params.setMessage("");
 }

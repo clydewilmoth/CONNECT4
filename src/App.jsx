@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { clickHandlerTurn, clickHandlerRestart, clickHandlerGamemode } from "./functions";
+import {
+  clickHandlerTurn,
+  clickHandlerRestart,
+  clickHandlerGamemode,
+  clickHandlerReturn,
+} from "./functions";
 
-let params = {};
+const params = {};
 
 export default function App() {
   const [colorBoard, setColorBoard] = useState(
@@ -34,7 +39,6 @@ export default function App() {
   params.gamemode = gamemode;
   params.setGamemode = setGamemode;
 
-
   return (
     <>
       <Heading />
@@ -47,7 +51,10 @@ export default function App() {
 
 function Field({ row, col, style, disabled }) {
   const [pointer, setPointer] = useState(false);
-  const styling = { backgroundColor: style.backgroundColor, cursor: pointer && "pointer" };
+  const styling = {
+    backgroundColor: style.backgroundColor,
+    cursor: pointer && "pointer",
+  };
 
   return (
     <button
@@ -57,8 +64,12 @@ function Field({ row, col, style, disabled }) {
       style={styling}
       onClick={() => clickHandlerTurn(col, params)}
       disabled={disabled}
-      onMouseEnter={() => { !disabled && !params.gameOver && setPointer(true) }}
-      onMouseLeave={() => { params.gameOver && setPointer(false) }}
+      onMouseEnter={() => {
+        !disabled && !params.gameOver && setPointer(true);
+      }}
+      onMouseLeave={() => {
+        params.gameOver && setPointer(false);
+      }}
     >
       &nbsp;
     </button>
@@ -66,8 +77,7 @@ function Field({ row, col, style, disabled }) {
 }
 
 function Board() {
-
-  let fields = params.colorBoard.map((subarr, row) =>
+  const fields = params.colorBoard.map((subarr, row) =>
     subarr.map((color, col) => {
       return (
         <Field
@@ -76,7 +86,6 @@ function Board() {
           col={col}
           style={{ backgroundColor: color }}
           disabled={row === 0 ? params.gameOver : true}
-
         />
       );
     })
@@ -89,39 +98,68 @@ function Board() {
       <div className="board-inner">
         {fields.map((subarr) => subarr.map((field) => field))}
       </div>
+      <Return />
+      <br />
       <Restart />
     </div>
   );
 }
 
 function Restart() {
-  return (< button className="restart" hidden={!params.gameOver} onClick={() => clickHandlerRestart(params)}>
-    &#8634;
-  </button >);
+  return (
+    <button
+      className="inner-button"
+      id="restart"
+      hidden={!params.gameOver}
+      onClick={() => clickHandlerRestart(params)}
+    >
+      &#8634;
+    </button>
+  );
+}
+
+function Return() {
+  return (
+    <button className="inner-button" onClick={() => clickHandlerReturn(params)}>
+      menu
+    </button>
+  );
 }
 
 function Gamemode() {
-  return <div className="gamemode-div" hidden={!params.menu}>
-    <button className="gamemode-button" onClick={() => clickHandlerGamemode(params, 1)}>
-      singleplayer
-    </button>
-    <br />
-    <button className="gamemode-button" onClick={() => clickHandlerGamemode(params, 2)}>
-      multiplayer
-    </button>
-  </div>
+  return (
+    <div className="gamemode-div" hidden={!params.menu}>
+      <button
+        className="gamemode-button"
+        onClick={() => clickHandlerGamemode(params, 1)}
+      >
+        singleplayer
+      </button>
+      <br />
+      <button
+        className="gamemode-button"
+        onClick={() => clickHandlerGamemode(params, 2)}
+      >
+        multiplayer
+      </button>
+    </div>
+  );
 }
 
 function Message() {
   const displayMem = params.menu ? "none" : "";
-  return <p className="message" style={{ display: displayMem }}>
-    {params.message}
-  </p>
+  return (
+    <p className="message" style={{ display: displayMem }}>
+      {params.message}
+    </p>
+  );
 }
 
 function Heading() {
   const displayMem = !params.menu ? "none" : "";
-  return <h1 className="heading" style={{ display: displayMem }}>
-    CONNECT4
-  </h1>
+  return (
+    <h1 className="heading" style={{ display: displayMem }}>
+      CONNECT4
+    </h1>
+  );
 }
