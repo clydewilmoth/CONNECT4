@@ -6,7 +6,7 @@ Build in React within Vite.
 
 > Make sure node is installed.
 
-shell> `npm install` and `npm run dev`
+Run `npm install` and `npm run dev`.
 
 > Now hold [cmd] or [ctr] and click on the URI
 
