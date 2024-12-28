@@ -1,4 +1,4 @@
-export function putChip(
+async function putChip(
   col,
   colorBoard,
   currentPlayer,
@@ -10,14 +10,14 @@ export function putChip(
       if (currentPlayer === "red") {
         let mem = colorBoard;
         mem[row][col] = "red";
-        setColorBoard(mem);
-        setCurrentPlayer("yellow");
+        await setColorBoard(mem);
+        await setCurrentPlayer("yellow");
         return [true, row];
       } else {
         let mem = colorBoard;
         mem[row][col] = "yellow";
-        setColorBoard(mem);
-        setCurrentPlayer("red");
+        await setColorBoard(mem);
+        await setCurrentPlayer("red");
         return [true, row];
       }
     }
@@ -25,7 +25,7 @@ export function putChip(
   return [false, null];
 }
 
-export function checkWin(row, col, colorBoard, currentPlayer) {
+function checkWin(row, col, colorBoard, currentPlayer) {
   if (
     (row <= 2 &&
       colorBoard[row][col] === currentPlayer &&
@@ -78,36 +78,79 @@ export function checkWin(row, col, colorBoard, currentPlayer) {
   }
 }
 
-export function clickHandlerTurn(col, params) {
-  const [worked, currentChip] = putChip(
-    col,
-    params.colorBoard,
-    params.currentPlayer,
-    params.setColorBoard,
-    params.setCurrentPlayer
-  );
-  if (worked) {
-    params.setMessage("");
-    params.setTurns(params.turns + 1);
-
-    const win = checkWin(currentChip, col, params.colorBoard, params.currentPlayer);
-
-    if (win) {
-      params.setMessage(params.currentPlayer + " wins!");
-      params.setGameOver(true);
-
-    } else if (params.turns === 42) {
-      params.setMessage("draw!");
-      params.setGameOver(true);
+function botChoice(colorBoard) {
+  while (true) {
+    const rand = Math.floor(Math.random() * 7)
+    if (colorBoard[0][rand] === "white") {
+      return rand;
     }
-  } else {
-    params.setMessage("column is full!");
   }
 }
 
+export async function clickHandlerTurn(col, params) {
+
+  const iMax = params.gamemode === 1 ? 2 : 1;
+
+  for (let i = 0; i < iMax; i++) {
+
+    const memCurrentPlayer = params.currentPlayer;
+
+    const botMove = i !== 0 && botChoice(params.colorBoard);
+
+    const [worked, currentChip] = i === 0 ?
+      await putChip(
+        col,
+        params.colorBoard,
+        params.currentPlayer,
+        params.setColorBoard,
+        params.setCurrentPlayer
+      ) : await putChip(
+        botMove,
+        params.colorBoard,
+        params.currentPlayer,
+        params.setColorBoard,
+        params.setCurrentPlayer
+      );
+
+    if (worked) {
+      await params.setMessage("");
+
+      const actualMove = i === 0 ? col : botMove;
+
+      const win = checkWin(currentChip, actualMove, params.colorBoard, memCurrentPlayer);
+
+      await params.setTurns(params.turns + 1);
+
+      if (win) {
+        const mem = i === 1 ? "bot " : "player ";
+        await params.setMessage(mem + memCurrentPlayer + " wins!");
+        await params.setGameOver(true);
+        await params.setCurrentPlayer("red");
+        break;
+
+      } else if (params.turns === 42) {
+        await params.setMessage("draw!");
+        await params.setGameOver(true);
+        await params.setCurrentPlayer("red")
+        break;
+      }
+    } else {
+      params.setMessage("column is full!");
+      break;
+    }
+  }
+
+
+}
+
 export function clickHandlerRestart(params) {
-  params.setTurns(1);
+  params.setTurns(0);
   params.setGameOver(false);
   params.setColorBoard(Array.from(Array(6), () => new Array(7).fill("white")));
   params.setMessage("");
+}
+
+export function clickHandlerGamemode(params, gamemode) {
+  params.setMenu(false);
+  params.setGamemode(gamemode);
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { clickHandlerTurn, clickHandlerRestart } from "./functions";
+import { clickHandlerTurn, clickHandlerRestart, clickHandlerGamemode } from "./functions";
 
 let params = {};
 
@@ -22,18 +22,27 @@ export default function App() {
   params.message = message;
   params.setMessage = setMessage;
 
-  const [turns, setTurns] = useState(1);
+  const [turns, setTurns] = useState(0);
   params.turns = turns;
   params.setTurns = setTurns;
+
+  const [menu, setMenu] = useState(true);
+  params.menu = menu;
+  params.setMenu = setMenu;
+
+  const [gamemode, setGamemode] = useState(0);
+  params.gamemode = gamemode;
+  params.setGamemode = setGamemode;
 
 
 
   return (
     <>
       <h1>CONNECT4</h1>
-      <Board />
-      <Restart />
-      <p>{params.message}</p>
+      <Gamemode />
+      {!params.menu && <Board />}
+      {!params.menu && <Restart />}
+      {!params.menu && <p>{params.message}</p>}
     </>
   );
 }
@@ -76,7 +85,19 @@ function Board() {
 }
 
 function Restart() {
-  return (< button className="restart" disabled={!params.gameOver} hidden={!params.gameOver} onClick={() => clickHandlerRestart(params)}>
+  return (< button className="restart" hidden={!params.gameOver} onClick={() => clickHandlerRestart(params)}>
     &#8634;
   </button >);
+}
+
+function Gamemode() {
+  return <div className="gamemode-div" hidden={!params.menu}>
+    <button className="gamemode-button" onClick={() => clickHandlerGamemode(params, 1)}>
+      singleplayer
+    </button>
+    <br />
+    <button className="gamemode-button" onClick={() => clickHandlerGamemode(params, 2)}>
+      multiplayer
+    </button>
+  </div>
 }
