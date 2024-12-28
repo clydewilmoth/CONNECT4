@@ -12,70 +12,71 @@ async function putChip(
         mem[row][col] = "red";
         await setColorBoard(mem);
         await setCurrentPlayer("yellow");
-        return [true, row];
+        return true;
       } else {
         let mem = colorBoard;
         mem[row][col] = "yellow";
         await setColorBoard(mem);
         await setCurrentPlayer("red");
-        return [true, row];
+        return true;
       }
     }
   }
-  return [false, null];
+  return false;
 }
 
-function checkWin(row, col, colorBoard, currentPlayer) {
-  if (
-    (row <= 2 &&
-      colorBoard[row][col] === currentPlayer &&
-      colorBoard[row + 1][col] === currentPlayer &&
-      colorBoard[row + 2][col] === currentPlayer &&
-      colorBoard[row + 3][col] === currentPlayer) ||
-    (col <= 3 &&
-      colorBoard[row][col] === currentPlayer &&
-      colorBoard[row][col + 1] === currentPlayer &&
-      colorBoard[row][col + 2] === currentPlayer &&
-      colorBoard[row][col + 3] === currentPlayer) ||
-    (row >= 3 &&
-      colorBoard[row][col] === currentPlayer &&
-      colorBoard[row - 1][col] === currentPlayer &&
-      colorBoard[row - 2][col] === currentPlayer &&
-      colorBoard[row - 3][col] === currentPlayer) ||
-    (col >= 3 &&
-      colorBoard[row][col] === currentPlayer &&
-      colorBoard[row][col - 1] === currentPlayer &&
-      colorBoard[row][col - 2] === currentPlayer &&
-      colorBoard[row][col - 3] === currentPlayer) ||
-    (row <= 2 &&
-      col <= 3 &&
-      colorBoard[row][col] === currentPlayer &&
-      colorBoard[row + 1][col + 1] === currentPlayer &&
-      colorBoard[row + 2][col + 2] === currentPlayer &&
-      colorBoard[row + 3][col + 3] === currentPlayer) ||
-    (row >= 3 &&
-      col >= 3 &&
-      colorBoard[row][col] === currentPlayer &&
-      colorBoard[row - 1][col - 1] === currentPlayer &&
-      colorBoard[row - 2][col - 2] === currentPlayer &&
-      colorBoard[row - 3][col - 3] === currentPlayer) ||
-    (row <= 2 &&
-      col >= 3 &&
-      colorBoard[row][col] === currentPlayer &&
-      colorBoard[row + 1][col - 1] === currentPlayer &&
-      colorBoard[row + 2][col - 2] === currentPlayer &&
-      colorBoard[row + 3][col - 3] === currentPlayer) ||
-    (row >= 3 &&
-      col <= 3 &&
-      colorBoard[row][col] === currentPlayer &&
-      colorBoard[row - 1][col + 1] === currentPlayer &&
-      colorBoard[row - 2][col + 2] === currentPlayer &&
-      colorBoard[row - 3][col + 3] === currentPlayer)
-  ) {
-    return true;
-  } else {
-    return false;
+async function checkWin(colorBoard, setColorBoard, currentPlayer) {
+
+  const mem = colorBoard;
+
+  for (let row = 0; row <= 5; row++) {
+    for (let col = 0; col <= 6; col++) {
+      if (row <= 2 && mem[row][col] === currentPlayer &&
+        mem[row + 1][col] === currentPlayer &&
+        mem[row + 2][col] === currentPlayer &&
+        mem[row + 3][col] === currentPlayer
+      ) {
+        for (let i = 0; i <= 3; i++) {
+          mem[row + i][col] = "orange";
+        }
+        await setColorBoard(mem);
+        return true;
+      } else if (col <= 3 && mem[row][col] === currentPlayer &&
+        mem[row][col + 1] === currentPlayer &&
+        mem[row][col + 2] === currentPlayer &&
+        mem[row][col + 3] === currentPlayer
+      ) {
+        for (let i = 0; i <= 3; i++) {
+          mem[row][col + i] = "orange";
+        }
+        await setColorBoard(mem);
+        return true;
+      } else if (row <= 2 && col <= 3 && mem[row][col] === currentPlayer &&
+        mem[row + 1][col + 1] === currentPlayer &&
+        mem[row + 2][col + 2] === currentPlayer &&
+        mem[row + 3][col + 3] === currentPlayer
+      ) {
+        for (let i = 0; i <= 3; i++) {
+          mem[row + i][col + i] = "orange";
+        }
+        await setColorBoard(mem);
+        return true;
+      } else if (row <= 2 && col <= 3 && mem[row][col + 3] === currentPlayer &&
+        mem[row + 1][col + 2] === currentPlayer &&
+        mem[row + 2][col + 1] === currentPlayer &&
+        mem[row + 3][col] === currentPlayer
+      ) {
+        for (let i = 0; i <= 3; i++) {
+          mem[row + i][col + 3 - i] = "orange";
+        }
+        await setColorBoard(mem);
+        return true;
+      }
+    }
   }
+
+  return false;
+
 }
 
 function botChoice(colorBoard) {
@@ -95,9 +96,7 @@ export async function clickHandlerTurn(col, params) {
 
     const memCurrentPlayer = params.currentPlayer;
 
-    const botMove = i !== 0 && botChoice(params.colorBoard);
-
-    const [worked, currentChip] = i === 0 ?
+    const worked = i === 0 ?
       await putChip(
         col,
         params.colorBoard,
@@ -105,7 +104,7 @@ export async function clickHandlerTurn(col, params) {
         params.setColorBoard,
         params.setCurrentPlayer
       ) : await putChip(
-        botMove,
+        botChoice(params.colorBoard),
         params.colorBoard,
         params.currentPlayer,
         params.setColorBoard,
@@ -115,9 +114,7 @@ export async function clickHandlerTurn(col, params) {
     if (worked) {
       await params.setMessage("");
 
-      const actualMove = i === 0 ? col : botMove;
-
-      const win = checkWin(currentChip, actualMove, params.colorBoard, memCurrentPlayer);
+      const win = await checkWin(params.colorBoard, params.setColorBoard, memCurrentPlayer);
 
       await params.setTurns(params.turns + 1);
 

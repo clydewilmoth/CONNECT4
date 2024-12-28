@@ -35,14 +35,13 @@ export default function App() {
   params.setGamemode = setGamemode;
 
 
-
   return (
     <>
-      <h1>CONNECT4</h1>
+      <Heading />
       <Gamemode />
-      {!params.menu && <Board />}
-      {!params.menu && <Restart />}
-      {!params.menu && <p>{params.message}</p>}
+      <Board />
+      <Restart />
+      <Message />
     </>
   );
 }
@@ -63,7 +62,7 @@ function Field({ row, col, backgroundColor, disabled }) {
 }
 
 function Board() {
-  var fields = params.colorBoard.map((subarr, row) =>
+  let fields = params.colorBoard.map((subarr, row) =>
     subarr.map((color, col) => {
       return (
         <Field
@@ -77,8 +76,10 @@ function Board() {
     })
   );
 
+  const displayMem = params.menu ? "none" : "";
+
   return (
-    <div className="board">
+    <div className="board" style={{ display: displayMem }}>
       {fields.map((subarr) => subarr.map((field) => field))}
     </div>
   );
@@ -100,4 +101,18 @@ function Gamemode() {
       multiplayer
     </button>
   </div>
+}
+
+function Message() {
+  const displayMem = params.menu ? "none" : "";
+  return <p className="message" style={{ display: displayMem }}>
+    {params.message}
+  </p>
+}
+
+function Heading() {
+  const displayMem = !params.menu ? "none" : "";
+  return <h1 className="heading" style={{ display: displayMem }}>
+    CONNECT4
+  </h1>
 }
