@@ -78,3 +78,11 @@ body {
 .message {
     font-size: larger;
 }
+
+.heading{
+    transition: font-size 1s ease-out 100ms;
+}
+
+.heading:hover{
+    font-size:3em;
+}

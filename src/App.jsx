@@ -51,8 +51,14 @@ export default function App() {
 
 function Field({ row, col, style, disabled }) {
   const [pointer, setPointer] = useState(false);
+  const [color, setColor] = useState("white");
+
   const styling = {
-    backgroundColor: style.backgroundColor,
+    backgroundColor: !pointer
+      ? style.backgroundColor
+      : params.currentPlayer === "red" && row === 0
+      ? color
+      : params.currentPlayer === "yellow" && row === 0 && color,
     cursor: pointer && "pointer",
   };
 
@@ -62,13 +68,28 @@ function Field({ row, col, style, disabled }) {
       row={row}
       col={col}
       style={styling}
-      onClick={() => clickHandlerTurn(col, params)}
+      onClick={async () => {
+        await clickHandlerTurn(col, params);
+        if (params.gamemode === 2) {
+          params.currentPlayer === "red"
+            ? setColor("lightcoral")
+            : setColor("#f2f28d");
+        }
+      }}
       disabled={disabled}
       onMouseEnter={() => {
-        !disabled && !params.gameOver && setPointer(true);
+        params.gameOver && setPointer(false);
+
+        if (!disabled && !params.gameOver) {
+          setPointer(true);
+        }
+        params.currentPlayer === "red"
+          ? setColor("lightcoral")
+          : setColor("#f2f28d");
       }}
       onMouseLeave={() => {
-        params.gameOver && setPointer(false);
+        setColor(style.backgroundColor);
+        setPointer(false);
       }}
     >
       &nbsp;

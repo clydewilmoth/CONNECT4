@@ -96,6 +96,16 @@ function botChoice(colorBoard) {
   }
 }
 
+export function colFull(col, colorBoard) {
+  for (let row = 5; row >= 0; row--) {
+    if (colorBoard[row][col] === "white") {
+      return false;
+    } else {
+      return true;
+    }
+  }
+}
+
 export async function clickHandlerTurn(col, params) {
   const iMax = params.gamemode === 1 ? 2 : 1;
 
