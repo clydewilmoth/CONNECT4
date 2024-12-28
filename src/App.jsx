@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { clickHandler } from "./fns";
+import { clickHandler } from "./functions";
 
 let params = {};
 
