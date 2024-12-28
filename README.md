@@ -8,7 +8,7 @@ Build in React within Vite.
 
 Run `npm install` and `npm run dev`.
 
-> Now hold [cmd] or [ctr] and click on the URI
+> Now hold [cmd] or [ctr] and click on the URI.
 
 ## Dev
 
