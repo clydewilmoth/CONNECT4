@@ -1,10 +1,10 @@
 # CONNECT4
 
-Build in React within Vite.
+Built in React within Vite.
 
-## How to execute dev server
+## How to host local live server
 
-> Make sure node is installed.
+> Make sure Node is installed.
 
 Run `npm install` and `npm run dev`.
 
