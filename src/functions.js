@@ -78,7 +78,7 @@ export function checkWin(row, col, colorBoard, currentPlayer) {
   }
 }
 
-export function clickHandler(col, params) {
+export function clickHandlerTurn(col, params) {
   const [worked, currentChip] = putChip(
     col,
     params.colorBoard,
@@ -103,4 +103,11 @@ export function clickHandler(col, params) {
   } else {
     params.setMessage("column is full!");
   }
+}
+
+export function clickHandlerRestart(params) {
+  params.setTurns(1);
+  params.setGameOver(false);
+  params.setColorBoard(Array.from(Array(6), () => new Array(7).fill("white")));
+  params.setMessage("");
 }

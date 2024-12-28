@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { clickHandler } from "./functions";
+import { clickHandlerTurn, clickHandlerRestart } from "./functions";
 
 let params = {};
 
@@ -32,6 +32,7 @@ export default function App() {
     <>
       <h1>CONNECT4</h1>
       <Board />
+      <Restart />
       <p>{params.message}</p>
     </>
   );
@@ -44,7 +45,7 @@ function Field({ row, col, backgroundColor, disabled }) {
       row={row}
       col={col}
       style={backgroundColor}
-      onClick={() => clickHandler(col, params)}
+      onClick={() => clickHandlerTurn(col, params)}
       disabled={disabled}
     >
       &nbsp;
@@ -72,4 +73,10 @@ function Board() {
       {fields.map((subarr) => subarr.map((field) => field))}
     </div>
   );
+}
+
+function Restart() {
+  return (< button className="restart" disabled={!params.gameOver} hidden={!params.gameOver} onClick={() => clickHandlerRestart(params)}>
+    &#8634;
+  </button >);
 }
