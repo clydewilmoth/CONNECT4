@@ -4,19 +4,27 @@ body {
     color: black;
 }
 
-.board {
+.board-outer {
     width: 700px;
-    height: 600px;
-    display: grid;
-    grid-template-columns: repeat(7, auto [col-start]);
-    margin-top: 50px;
-    margin-left: auto;
-    margin-right: auto;
     border: 5px solid black;
     background-color: blue;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.board .field {
+.board-inner {
+    width: 630px;
+    height: 540px;
+    display: grid;
+    grid-template-columns: repeat(7, auto [col-start]);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.board-inner .field {
     border: 3px solid black;
     border-radius: 100%;
     margin: 10px;
@@ -28,8 +36,13 @@ body {
     font-size: xx-large;
     border: 3px solid black;
     background-color: white;
-    margin-top: 20px;
+    margin-bottom: 30px;
 
+}
+
+.restart:hover {
+    cursor: pointer;
+    background-color: lightgray;
 }
 
 .gamemode-div {
@@ -51,4 +64,13 @@ body {
     height: 50px;
     font-size: larger;
 
+}
+
+.gamemode-div .gamemode-button:hover {
+    cursor: pointer;
+    background-color: lightgray;
+}
+
+.message {
+    font-size: larger;
 }

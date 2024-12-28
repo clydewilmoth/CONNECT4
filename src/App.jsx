@@ -40,21 +40,25 @@ export default function App() {
       <Heading />
       <Gamemode />
       <Board />
-      <Restart />
       <Message />
     </>
   );
 }
 
-function Field({ row, col, backgroundColor, disabled }) {
+function Field({ row, col, style, disabled }) {
+  const [pointer, setPointer] = useState(false);
+  const styling = { backgroundColor: style.backgroundColor, cursor: pointer && "pointer" };
+
   return (
     <button
       className="field"
       row={row}
       col={col}
-      style={backgroundColor}
+      style={styling}
       onClick={() => clickHandlerTurn(col, params)}
       disabled={disabled}
+      onMouseEnter={() => { !disabled && !params.gameOver && setPointer(true) }}
+      onMouseLeave={() => { params.gameOver && setPointer(false) }}
     >
       &nbsp;
     </button>
@@ -62,6 +66,7 @@ function Field({ row, col, backgroundColor, disabled }) {
 }
 
 function Board() {
+
   let fields = params.colorBoard.map((subarr, row) =>
     subarr.map((color, col) => {
       return (
@@ -69,8 +74,9 @@ function Board() {
           key={row.toString() + col.toString()}
           row={row}
           col={col}
-          backgroundColor={{ backgroundColor: color }}
+          style={{ backgroundColor: color }}
           disabled={row === 0 ? params.gameOver : true}
+
         />
       );
     })
@@ -79,8 +85,11 @@ function Board() {
   const displayMem = params.menu ? "none" : "";
 
   return (
-    <div className="board" style={{ display: displayMem }}>
-      {fields.map((subarr) => subarr.map((field) => field))}
+    <div className="board-outer" style={{ display: displayMem }}>
+      <div className="board-inner">
+        {fields.map((subarr) => subarr.map((field) => field))}
+      </div>
+      <Restart />
     </div>
   );
 }
