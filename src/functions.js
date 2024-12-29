@@ -25,60 +25,65 @@ async function putChip(
   return false;
 }
 
-async function checkWin(colorBoard, setColorBoard, currentPlayer) {
-  const mem = colorBoard;
+async function checkWin(
+  colorBoard,
+  currentPlayer,
+  outlineBoard,
+  setOutlineBoard
+) {
+  const memOutlineBoard = outlineBoard;
 
   for (let row = 0; row <= 5; row++) {
     for (let col = 0; col <= 6; col++) {
       if (
         row <= 2 &&
-        mem[row][col] === currentPlayer &&
-        mem[row + 1][col] === currentPlayer &&
-        mem[row + 2][col] === currentPlayer &&
-        mem[row + 3][col] === currentPlayer
+        colorBoard[row][col] === currentPlayer &&
+        colorBoard[row + 1][col] === currentPlayer &&
+        colorBoard[row + 2][col] === currentPlayer &&
+        colorBoard[row + 3][col] === currentPlayer
       ) {
         for (let i = 0; i <= 3; i++) {
-          mem[row + i][col] = "orange";
+          memOutlineBoard[row + i][col] = "7px outset black";
         }
-        await setColorBoard(mem);
+        await setOutlineBoard(memOutlineBoard);
         return true;
       } else if (
         col <= 3 &&
-        mem[row][col] === currentPlayer &&
-        mem[row][col + 1] === currentPlayer &&
-        mem[row][col + 2] === currentPlayer &&
-        mem[row][col + 3] === currentPlayer
+        colorBoard[row][col] === currentPlayer &&
+        colorBoard[row][col + 1] === currentPlayer &&
+        colorBoard[row][col + 2] === currentPlayer &&
+        colorBoard[row][col + 3] === currentPlayer
       ) {
         for (let i = 0; i <= 3; i++) {
-          mem[row][col + i] = "orange";
+          memOutlineBoard[row][col + i] = "7px outset black";
         }
-        await setColorBoard(mem);
-        return true;
-      } else if (
-        row <= 2 &&
-        col <= 3 &&
-        mem[row][col] === currentPlayer &&
-        mem[row + 1][col + 1] === currentPlayer &&
-        mem[row + 2][col + 2] === currentPlayer &&
-        mem[row + 3][col + 3] === currentPlayer
-      ) {
-        for (let i = 0; i <= 3; i++) {
-          mem[row + i][col + i] = "orange";
-        }
-        await setColorBoard(mem);
+        await setOutlineBoard(memOutlineBoard);
         return true;
       } else if (
         row <= 2 &&
         col <= 3 &&
-        mem[row][col + 3] === currentPlayer &&
-        mem[row + 1][col + 2] === currentPlayer &&
-        mem[row + 2][col + 1] === currentPlayer &&
-        mem[row + 3][col] === currentPlayer
+        colorBoard[row][col] === currentPlayer &&
+        colorBoard[row + 1][col + 1] === currentPlayer &&
+        colorBoard[row + 2][col + 2] === currentPlayer &&
+        colorBoard[row + 3][col + 3] === currentPlayer
       ) {
         for (let i = 0; i <= 3; i++) {
-          mem[row + i][col + 3 - i] = "orange";
+          memOutlineBoard[row + i][col + i] = "7px outset black";
         }
-        await setColorBoard(mem);
+        await setOutlineBoard(memOutlineBoard);
+        return true;
+      } else if (
+        row <= 2 &&
+        col <= 3 &&
+        colorBoard[row][col + 3] === currentPlayer &&
+        colorBoard[row + 1][col + 2] === currentPlayer &&
+        colorBoard[row + 2][col + 1] === currentPlayer &&
+        colorBoard[row + 3][col] === currentPlayer
+      ) {
+        for (let i = 0; i <= 3; i++) {
+          memOutlineBoard[row + i][col + 3 - i] = "7px outset black";
+        }
+        await setOutlineBoard(memOutlineBoard);
         return true;
       }
     }
@@ -106,7 +111,7 @@ export function colFull(col, colorBoard) {
   }
 }
 
-export async function clickHandlerTurn(col, params) {
+export async function clickHandlerTurn(params, col) {
   const iMax = params.gamemode === 1 ? 2 : 1;
 
   for (let i = 0; i < iMax; i++) {
@@ -134,8 +139,9 @@ export async function clickHandlerTurn(col, params) {
 
       const win = await checkWin(
         params.colorBoard,
-        params.setColorBoard,
-        memCurrentPlayer
+        memCurrentPlayer,
+        params.outlineBoard,
+        params.setOutlineBoard
       );
 
       await params.setTurns(params.turns + 1);
@@ -163,6 +169,9 @@ export function clickHandlerRestart(params) {
   params.setTurns(0);
   params.setGameOver(false);
   params.setColorBoard(Array.from(Array(6), () => new Array(7).fill("white")));
+  params.setOutlineBoard(
+    Array.from(Array(6), () => new Array(7).fill("0px solid black"))
+  );
   params.setMessage("");
 }
 
@@ -176,5 +185,8 @@ export function clickHandlerReturn(params) {
   params.setTurns(0);
   params.setGameOver(false);
   params.setColorBoard(Array.from(Array(6), () => new Array(7).fill("white")));
+  params.setOutlineBoard(
+    Array.from(Array(6), () => new Array(7).fill("0px solid black"))
+  );
   params.setMessage("");
 }

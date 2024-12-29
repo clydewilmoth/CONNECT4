@@ -15,6 +15,12 @@ export default function App() {
   params.colorBoard = colorBoard;
   params.setColorBoard = setColorBoard;
 
+  const [outlineBoard, setOutlineBoard] = useState(
+    Array.from(Array(6), () => new Array(7).fill("0px solid black"))
+  );
+  params.outlineBoard = outlineBoard;
+  params.setOutlineBoard = setOutlineBoard;
+
   const [gameOver, setGameOver] = useState(false);
   params.gameOver = gameOver;
   params.setGameOver = setGameOver;
@@ -51,15 +57,18 @@ export default function App() {
 
 function Field({ row, col, style, disabled }) {
   const [pointer, setPointer] = useState(false);
-  const [color, setColor] = useState("white");
+  const [hoverColor, setHoverColor] = useState("white");
 
   const styling = {
     backgroundColor: !pointer
       ? style.backgroundColor
       : params.currentPlayer === "red" && row === 0
-      ? color
-      : params.currentPlayer === "yellow" && row === 0 && color,
+      ? hoverColor
+      : params.currentPlayer === "yellow" && row === 0 && hoverColor,
     cursor: pointer && "pointer",
+    outlineWidth: style.outlineWidth,
+    outlineColor: style.outlineColor,
+    outlineStyle: style.outlineStyle,
   };
 
   return (
@@ -69,26 +78,24 @@ function Field({ row, col, style, disabled }) {
       col={col}
       style={styling}
       onClick={async () => {
-        await clickHandlerTurn(col, params);
+        await clickHandlerTurn(params, col);
         if (params.gamemode === 2) {
           params.currentPlayer === "red"
-            ? setColor("lightcoral")
-            : setColor("#f2f28d");
+            ? setHoverColor("hsla(0, 100%, 80%, 1)")
+            : setHoverColor("hsla(60, 100%, 80%, 1)");
         }
       }}
       disabled={disabled}
       onMouseEnter={() => {
-        params.gameOver && setPointer(false);
-
-        if (!disabled && !params.gameOver) {
-          setPointer(true);
+        if (!disabled) {
+          setPointer(!params.gameOver);
         }
         params.currentPlayer === "red"
-          ? setColor("lightcoral")
-          : setColor("#f2f28d");
+          ? setHoverColor("hsla(0, 100%, 80%, 1)")
+          : setHoverColor("hsla(60, 100%, 80%, 1)");
       }}
       onMouseLeave={() => {
-        setColor(style.backgroundColor);
+        setHoverColor(style.backgroundColor);
         setPointer(false);
       }}
     >
@@ -105,7 +112,12 @@ function Board() {
           key={row.toString() + col.toString()}
           row={row}
           col={col}
-          style={{ backgroundColor: color }}
+          style={{
+            backgroundColor: color,
+            outlineWidth: params.outlineBoard[row][col].split(" ")[0],
+            outlineColor: params.outlineBoard[row][col].split(" ")[2],
+            outlineStyle: params.outlineBoard[row][col].split(" ")[1],
+          }}
           disabled={row === 0 ? params.gameOver : true}
         />
       );
