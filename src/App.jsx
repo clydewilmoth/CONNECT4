@@ -4,7 +4,10 @@ import {
   clickHandlerRestart,
   clickHandlerGamemode,
   clickHandlerReturn,
+  clickHandlerLoadBoard,
+  clickHandlerCopyClipboard,
 } from "./functions";
+import { use } from "react";
 
 const params = {};
 
@@ -44,6 +47,10 @@ export default function App() {
   const [gamemode, setGamemode] = useState(0);
   params.gamemode = gamemode;
   params.setGamemode = setGamemode;
+
+  const [turnsMem, setTurnsMem] = useState("");
+  params.turnsMem = turnsMem;
+  params.setTurnsMem = setTurnsMem;
 
   return (
     <>
@@ -125,15 +132,19 @@ function Board() {
   );
 
   const displayMem = params.menu ? "none" : "";
+  const displayState = params.gamemode === 1 ? "none" : "";
 
   return (
     <div className="board-outer" style={{ display: displayMem }}>
       <div className="board-inner">
         {fields.map((subarr) => subarr.map((field) => field))}
       </div>
-      <Return />
+      <BoardState display={displayState} />
       <br />
-      <Restart />
+      <div className="action-bar">
+        <Return />
+        <Restart />
+      </div>
     </div>
   );
 }
@@ -194,5 +205,57 @@ function Heading() {
     <h1 className="heading" style={{ display: displayMem }}>
       CONNECT4
     </h1>
+  );
+}
+
+function BoardState({ display }) {
+  const [boardDecimal, setBoardDecimal] = useState("");
+  params.boardDecimal = boardDecimal;
+  params.setBoardDecimal = setBoardDecimal;
+
+  const [inputDecimal, setInputDecimal] = useState("");
+  params.setInputDecimal = setInputDecimal;
+
+  const [showCopy, setShowCopy] = useState(false);
+  params.setShowCopy = setShowCopy;
+
+  return (
+    <div style={{ display: display }}>
+      <div className="board-state">
+        <div className="field-div">
+          <button
+            className="inner-button"
+            onClick={() => {
+              clickHandlerCopyClipboard(params);
+            }}
+          >
+            state
+          </button>
+        </div>
+        <input
+          className="board-rw"
+          id="1"
+          type="text"
+          readOnly={true}
+          value={showCopy ? "copied to clipboard!" : boardDecimal}
+        />
+      </div>
+      <div className="board-state">
+        <div className="field-div">
+          <button
+            className="inner-button"
+            onClick={() => clickHandlerLoadBoard(params, inputDecimal)}
+          >
+            load
+          </button>
+        </div>
+        <input
+          className="board-rw"
+          type="text"
+          value={inputDecimal}
+          onChange={(i) => setInputDecimal(i.target.value)}
+        />
+      </div>
+    </div>
   );
 }

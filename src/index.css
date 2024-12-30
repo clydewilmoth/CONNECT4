@@ -32,13 +32,13 @@ body {
 }
 
 .inner-button {
-    width: 100px;
+    width: 17%;
     height: 60px;
     font-size: larger;
     border: 3px solid black;
     background-color: white;
-    margin-bottom: 30px;
-
+    margin-left: 3%;
+    margin-right: 3%;
 }
 
 #restart{
@@ -50,6 +50,23 @@ body {
     background-color: lightgray;
 }
 
+#board-load-button{
+    margin-left: 16.1%;
+}
+
+.flex-box .inner-button{
+    width: 200px;
+}
+
+.board-state .inner-button:disabled{
+    margin-left: 16.1%;
+    color: black;
+    background-color: lightgray;
+    border-color: black;
+    cursor: not-allowed	;
+}
+
+
 .gamemode-div {
 
     margin-left: auto;
@@ -57,7 +74,6 @@ body {
     width: 300px;
     height: 202px;
     border: 5px solid black;
-
     background-color: blue;
 
 }
@@ -86,4 +102,42 @@ body {
 
 .heading:hover{
     font-size:3em;
+}
+
+.board-rw{
+    height: 40px;
+    width: 60%;
+    border: 3px solid black;
+    font-size: large;
+    margin-right: auto;
+}
+
+.board-state{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.action-bar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+}
+
+.board-state .inner-button{
+    width: 100px;
+    height: 48px;
+}
+
+.field-div{
+    width: 20%;
+    margin-left: auto;
 }
