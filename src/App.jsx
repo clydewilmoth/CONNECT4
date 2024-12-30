@@ -7,50 +7,49 @@ import {
   clickHandlerLoadBoard,
   clickHandlerCopyClipboard,
 } from "./functions";
-import { use } from "react";
 
-const params = {};
+const self = {};
 
 export default function App() {
   const [colorBoard, setColorBoard] = useState(
     Array.from(Array(6), () => new Array(7).fill("white"))
   );
-  params.colorBoard = colorBoard;
-  params.setColorBoard = setColorBoard;
+  self.colorBoard = colorBoard;
+  self.setColorBoard = setColorBoard;
 
   const [outlineBoard, setOutlineBoard] = useState(
     Array.from(Array(6), () => new Array(7).fill("0px solid black"))
   );
-  params.outlineBoard = outlineBoard;
-  params.setOutlineBoard = setOutlineBoard;
+  self.outlineBoard = outlineBoard;
+  self.setOutlineBoard = setOutlineBoard;
 
   const [gameOver, setGameOver] = useState(false);
-  params.gameOver = gameOver;
-  params.setGameOver = setGameOver;
+  self.gameOver = gameOver;
+  self.setGameOver = setGameOver;
 
   const [currentPlayer, setCurrentPlayer] = useState("red");
-  params.currentPlayer = currentPlayer;
-  params.setCurrentPlayer = setCurrentPlayer;
+  self.currentPlayer = currentPlayer;
+  self.setCurrentPlayer = setCurrentPlayer;
 
   const [message, setMessage] = useState("");
-  params.message = message;
-  params.setMessage = setMessage;
+  self.message = message;
+  self.setMessage = setMessage;
 
   const [turns, setTurns] = useState(0);
-  params.turns = turns;
-  params.setTurns = setTurns;
+  self.turns = turns;
+  self.setTurns = setTurns;
 
   const [menu, setMenu] = useState(true);
-  params.menu = menu;
-  params.setMenu = setMenu;
+  self.menu = menu;
+  self.setMenu = setMenu;
 
   const [gamemode, setGamemode] = useState(0);
-  params.gamemode = gamemode;
-  params.setGamemode = setGamemode;
+  self.gamemode = gamemode;
+  self.setGamemode = setGamemode;
 
   const [turnsMem, setTurnsMem] = useState("");
-  params.turnsMem = turnsMem;
-  params.setTurnsMem = setTurnsMem;
+  self.turnsMem = turnsMem;
+  self.setTurnsMem = setTurnsMem;
 
   return (
     <>
@@ -69,9 +68,9 @@ function Field({ row, col, style, disabled }) {
   const styling = {
     backgroundColor: !pointer
       ? style.backgroundColor
-      : params.currentPlayer === "red" && row === 0
+      : self.currentPlayer === "red" && row === 0
       ? hoverColor
-      : params.currentPlayer === "yellow" && row === 0 && hoverColor,
+      : self.currentPlayer === "yellow" && row === 0 && hoverColor,
     cursor: pointer && "pointer",
     outlineWidth: style.outlineWidth,
     outlineColor: style.outlineColor,
@@ -85,9 +84,9 @@ function Field({ row, col, style, disabled }) {
       col={col}
       style={styling}
       onClick={async () => {
-        await clickHandlerTurn(params, col);
-        if (params.gamemode === 2) {
-          params.currentPlayer === "red"
+        await clickHandlerTurn(self, col);
+        if (self.gamemode === 2) {
+          self.currentPlayer === "red"
             ? setHoverColor("hsla(0, 100%, 80%, 1)")
             : setHoverColor("hsla(60, 100%, 80%, 1)");
         }
@@ -95,9 +94,9 @@ function Field({ row, col, style, disabled }) {
       disabled={disabled}
       onMouseEnter={() => {
         if (!disabled) {
-          setPointer(!params.gameOver);
+          setPointer(!self.gameOver);
         }
-        params.currentPlayer === "red"
+        self.currentPlayer === "red"
           ? setHoverColor("hsla(0, 100%, 80%, 1)")
           : setHoverColor("hsla(60, 100%, 80%, 1)");
       }}
@@ -112,7 +111,7 @@ function Field({ row, col, style, disabled }) {
 }
 
 function Board() {
-  const fields = params.colorBoard.map((subarr, row) =>
+  const fields = self.colorBoard.map((subarr, row) =>
     subarr.map((color, col) => {
       return (
         <Field
@@ -121,18 +120,18 @@ function Board() {
           col={col}
           style={{
             backgroundColor: color,
-            outlineWidth: params.outlineBoard[row][col].split(" ")[0],
-            outlineColor: params.outlineBoard[row][col].split(" ")[2],
-            outlineStyle: params.outlineBoard[row][col].split(" ")[1],
+            outlineWidth: self.outlineBoard[row][col].split(" ")[0],
+            outlineColor: self.outlineBoard[row][col].split(" ")[2],
+            outlineStyle: self.outlineBoard[row][col].split(" ")[1],
           }}
-          disabled={row === 0 ? params.gameOver : true}
+          disabled={row === 0 ? self.gameOver : true}
         />
       );
     })
   );
 
-  const displayMem = params.menu ? "none" : "";
-  const displayState = params.gamemode === 1 ? "none" : "";
+  const displayMem = self.menu ? "none" : "";
+  const displayState = self.gamemode === 1 ? "none" : "";
 
   return (
     <div className="board-outer" style={{ display: displayMem }}>
@@ -154,8 +153,8 @@ function Restart() {
     <button
       className="inner-button"
       id="restart"
-      hidden={!params.gameOver}
-      onClick={() => clickHandlerRestart(params)}
+      hidden={!self.gameOver}
+      onClick={() => clickHandlerRestart(self)}
     >
       &#8634;
     </button>
@@ -164,7 +163,7 @@ function Restart() {
 
 function Return() {
   return (
-    <button className="inner-button" onClick={() => clickHandlerReturn(params)}>
+    <button className="inner-button" onClick={() => clickHandlerReturn(self)}>
       menu
     </button>
   );
@@ -172,17 +171,17 @@ function Return() {
 
 function Gamemode() {
   return (
-    <div className="gamemode-div" hidden={!params.menu}>
+    <div className="gamemode-div" hidden={!self.menu}>
       <button
         className="gamemode-button"
-        onClick={() => clickHandlerGamemode(params, 1)}
+        onClick={() => clickHandlerGamemode(self, 1)}
       >
         singleplayer
       </button>
       <br />
       <button
         className="gamemode-button"
-        onClick={() => clickHandlerGamemode(params, 2)}
+        onClick={() => clickHandlerGamemode(self, 2)}
       >
         multiplayer
       </button>
@@ -191,16 +190,16 @@ function Gamemode() {
 }
 
 function Message() {
-  const displayMem = params.menu ? "none" : "";
+  const displayMem = self.menu ? "none" : "";
   return (
     <p className="message" style={{ display: displayMem }}>
-      {params.message}
+      {self.message}
     </p>
   );
 }
 
 function Heading() {
-  const displayMem = !params.menu ? "none" : "";
+  const displayMem = !self.menu ? "none" : "";
   return (
     <h1 className="heading" style={{ display: displayMem }}>
       CONNECT4
@@ -210,14 +209,16 @@ function Heading() {
 
 function BoardState({ display }) {
   const [boardDecimal, setBoardDecimal] = useState("");
-  params.boardDecimal = boardDecimal;
-  params.setBoardDecimal = setBoardDecimal;
+  self.boardDecimal = boardDecimal;
+  self.setBoardDecimal = setBoardDecimal;
 
   const [inputDecimal, setInputDecimal] = useState("");
-  params.setInputDecimal = setInputDecimal;
+  self.inputDecimal = inputDecimal;
+  self.setInputDecimal = setInputDecimal;
 
   const [showCopy, setShowCopy] = useState(false);
-  params.setShowCopy = setShowCopy;
+  self.showCopy = showCopy;
+  self.setShowCopy = setShowCopy;
 
   return (
     <div style={{ display: display }}>
@@ -226,7 +227,7 @@ function BoardState({ display }) {
           <button
             className="inner-button"
             onClick={() => {
-              clickHandlerCopyClipboard(params);
+              clickHandlerCopyClipboard(self);
             }}
           >
             state
@@ -237,14 +238,14 @@ function BoardState({ display }) {
           id="1"
           type="text"
           readOnly={true}
-          value={showCopy ? "copied to clipboard!" : boardDecimal}
+          value={self.showCopy ? "copied to clipboard!" : self.boardDecimal}
         />
       </div>
       <div className="board-state">
         <div className="field-div">
           <button
             className="inner-button"
-            onClick={() => clickHandlerLoadBoard(params, inputDecimal)}
+            onClick={() => clickHandlerLoadBoard(self, self.inputDecimal)}
           >
             load
           </button>
@@ -252,7 +253,7 @@ function BoardState({ display }) {
         <input
           className="board-rw"
           type="text"
-          value={inputDecimal}
+          value={self.inputDecimal}
           onChange={(i) => setInputDecimal(i.target.value)}
         />
       </div>

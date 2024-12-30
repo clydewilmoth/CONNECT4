@@ -111,116 +111,116 @@ export function colFull(col, colorBoard) {
   }
 }
 
-export async function clickHandlerTurn(params, col) {
-  const iMax = params.gamemode === 1 ? 2 : 1;
+export async function clickHandlerTurn(self, col) {
+  const iMax = self.gamemode === 1 ? 2 : 1;
 
   for (let i = 0; i < iMax; i++) {
-    const memCurrentPlayer = params.currentPlayer;
+    const memCurrentPlayer = self.currentPlayer;
 
     const worked =
       i === 0
         ? await putChip(
             col,
-            params.colorBoard,
-            params.currentPlayer,
-            params.setColorBoard,
-            params.setCurrentPlayer
+            self.colorBoard,
+            self.currentPlayer,
+            self.setColorBoard,
+            self.setCurrentPlayer
           )
         : await putChip(
-            botChoice(params.colorBoard),
-            params.colorBoard,
-            params.currentPlayer,
-            params.setColorBoard,
-            params.setCurrentPlayer
+            botChoice(self.colorBoard),
+            self.colorBoard,
+            self.currentPlayer,
+            self.setColorBoard,
+            self.setCurrentPlayer
           );
 
     if (worked) {
-      await params.setMessage("");
+      await self.setMessage("");
 
       const win = await checkWin(
-        params.colorBoard,
+        self.colorBoard,
         memCurrentPlayer,
-        params.outlineBoard,
-        params.setOutlineBoard
+        self.outlineBoard,
+        self.setOutlineBoard
       );
 
-      await params.setTurnsMem(col + params.turnsMem);
-      await params.setTurns(params.turns + 1);
+      await self.setTurnsMem(col + self.turnsMem);
+      await self.setTurns(self.turns + 1);
 
       if (win) {
         const mem = i === 1 ? "bot " : "player ";
-        await params.setMessage(mem + memCurrentPlayer + " wins!");
-        await params.setGameOver(true);
+        await self.setMessage(mem + memCurrentPlayer + " wins!");
+        await self.setGameOver(true);
         break;
-      } else if (params.turns === 42) {
-        await params.setMessage("draw!");
-        await params.setGameOver(true);
+      } else if (self.turns === 42) {
+        await self.setMessage("draw!");
+        await self.setGameOver(true);
         break;
       }
     } else {
-      params.setMessage("column is full!");
+      self.setMessage("column is full!");
       break;
     }
   }
 
-  if (params.gamemode === 2) {
-    await params.setBoardDecimal(sepToDec(params.turnsMem).toString());
+  if (self.gamemode === 2) {
+    await self.setBoardDecimal(sepToDec(self.turnsMem).toString());
   }
 }
 
-export async function clickHandlerRestart(params) {
-  await params.setTurns(0);
-  await params.setGameOver(false);
-  await params.setCurrentPlayer("red");
-  await params.setColorBoard(
+export async function clickHandlerRestart(self) {
+  await self.setTurns(0);
+  await self.setGameOver(false);
+  await self.setCurrentPlayer("red");
+  await self.setColorBoard(
     Array.from(Array(6), () => new Array(7).fill("white"))
   );
-  await params.setOutlineBoard(
+  await self.setOutlineBoard(
     Array.from(Array(6), () => new Array(7).fill("0px solid black"))
   );
-  await params.setMessage("");
-  await params.setTurnsMem("");
-  await params.setBoardDecimal("");
-  await params.setInputDecimal("");
+  await self.setMessage("");
+  await self.setTurnsMem("");
+  await self.setBoardDecimal("");
+  await self.setInputDecimal("");
 }
 
-export async function clickHandlerGamemode(params, gamemode) {
-  await params.setMenu(false);
-  await params.setGamemode(gamemode);
+export async function clickHandlerGamemode(self, gamemode) {
+  await self.setMenu(false);
+  await self.setGamemode(gamemode);
 }
 
-export async function clickHandlerReturn(params) {
-  await params.setMenu(true);
-  await params.setTurns(0);
-  await params.setGameOver(false);
-  await params.setCurrentPlayer("red");
-  await params.setColorBoard(
+export async function clickHandlerReturn(self) {
+  await self.setMenu(true);
+  await self.setTurns(0);
+  await self.setGameOver(false);
+  await self.setCurrentPlayer("red");
+  await self.setColorBoard(
     Array.from(Array(6), () => new Array(7).fill("white"))
   );
-  await params.setOutlineBoard(
+  await self.setOutlineBoard(
     Array.from(Array(6), () => new Array(7).fill("0px solid black"))
   );
-  await params.setMessage("");
-  await params.setTurnsMem("");
-  await params.setBoardDecimal("");
-  await params.setInputDecimal("");
+  await self.setMessage("");
+  await self.setTurnsMem("");
+  await self.setBoardDecimal("");
+  await self.setInputDecimal("");
 }
 
-export async function clickHandlerLoadBoard(params, dec) {
+export async function clickHandlerLoadBoard(self, dec) {
   let sep = decToSep(dec);
-  await clickHandlerRestart(params);
+  await clickHandlerRestart(self);
 
   while (sep.length) {
-    await clickHandlerTurn(params, sep[sep.length - 1]);
+    await clickHandlerTurn(self, sep[sep.length - 1]);
     sep = sep.slice(0, -1);
   }
 }
 
-export async function clickHandlerCopyClipboard(params) {
-  navigator.clipboard.writeText(params.boardDecimal);
-  params.setShowCopy(true);
+export async function clickHandlerCopyClipboard(self) {
+  navigator.clipboard.writeText(self.boardDecimal);
+  self.setShowCopy(true);
   setTimeout(() => {
-    params.setShowCopy(false);
+    self.setShowCopy(false);
   }, 1500);
 }
 
