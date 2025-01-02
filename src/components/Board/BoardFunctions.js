@@ -1,10 +1,10 @@
-async function putChip(
+const putChip = async (
   col,
   colorBoard,
   currentPlayer,
   setColorBoard,
   setCurrentPlayer
-) {
+) => {
   for (let row = 5; row >= 0; row--) {
     if (colorBoard[row][col] === "white") {
       if (currentPlayer === "red") {
@@ -23,14 +23,14 @@ async function putChip(
     }
   }
   return false;
-}
+};
 
-async function checkWin(
+const checkWin = async (
   colorBoard,
   currentPlayer,
   outlineBoard,
   setOutlineBoard
-) {
+) => {
   const memOutlineBoard = outlineBoard;
 
   for (let row = 0; row <= 5; row++) {
@@ -90,28 +90,44 @@ async function checkWin(
   }
 
   return false;
-}
+};
 
-function botChoice(colorBoard) {
+const botChoice = (colorBoard) => {
   while (true) {
     const rand = Math.floor(Math.random() * 7);
     if (colorBoard[0][rand] === "white") {
       return rand;
     }
   }
-}
+};
 
-export function colFull(col, colorBoard) {
-  for (let row = 5; row >= 0; row--) {
-    if (colorBoard[row][col] === "white") {
-      return false;
-    } else {
-      return true;
-    }
+const sepToDec = (sep) => {
+  let res = 0n;
+  let ind = 0n;
+  let mem = sep.split("").reverse().join("");
+  while (ind < mem.length) {
+    res = BigInt(7n ** ind * BigInt(mem[ind])) + res;
+    ind++;
   }
-}
+  res = BigInt(7n ** ind) + res;
 
-export async function clickHandlerTurn(self, col) {
+  return res;
+};
+
+const decToSep = (dec) => {
+  let mem = BigInt(dec);
+  let res = "";
+
+  while (mem > 0n) {
+    res = (mem % 7n).toString() + res;
+    mem = mem / 7n;
+  }
+  res = res.slice(1, res.length);
+
+  return res;
+};
+
+export const clickHandlerTurn = async (self, col) => {
   const iMax = self.gamemode === 1 ? 2 : 1;
 
   for (let i = 0; i < iMax; i++) {
@@ -166,9 +182,9 @@ export async function clickHandlerTurn(self, col) {
   if (self.gamemode === 2) {
     await self.setBoardDecimal(sepToDec(self.turnsMem).toString());
   }
-}
+};
 
-export async function clickHandlerRestart(self) {
+export const clickHandlerRestart = async (self) => {
   await self.setTurns(0);
   await self.setGameOver(false);
   await self.setCurrentPlayer("red");
@@ -182,14 +198,9 @@ export async function clickHandlerRestart(self) {
   await self.setTurnsMem("");
   await self.setBoardDecimal("");
   await self.setInputDecimal("");
-}
+};
 
-export async function clickHandlerGamemode(self, gamemode) {
-  await self.setMenu(false);
-  await self.setGamemode(gamemode);
-}
-
-export async function clickHandlerReturn(self) {
+export const clickHandlerReturn = async (self) => {
   await self.setMenu(true);
   await self.setTurns(0);
   await self.setGameOver(false);
@@ -204,9 +215,9 @@ export async function clickHandlerReturn(self) {
   await self.setTurnsMem("");
   await self.setBoardDecimal("");
   await self.setInputDecimal("");
-}
+};
 
-export async function clickHandlerLoadBoard(self, dec) {
+export const clickHandlerLoadBoard = async (self, dec) => {
   let sep = decToSep(dec);
   await clickHandlerRestart(self);
 
@@ -214,38 +225,12 @@ export async function clickHandlerLoadBoard(self, dec) {
     await clickHandlerTurn(self, sep[sep.length - 1]);
     sep = sep.slice(0, -1);
   }
-}
+};
 
-export async function clickHandlerCopyClipboard(self) {
+export const clickHandlerCopyClipboard = async (self) => {
   navigator.clipboard.writeText(self.boardDecimal);
   self.setShowCopy(true);
   setTimeout(() => {
     self.setShowCopy(false);
   }, 1500);
-}
-
-function sepToDec(sep) {
-  let res = 0n;
-  let ind = 0n;
-  let mem = sep.split("").reverse().join("");
-  while (ind < mem.length) {
-    res = BigInt(7n ** ind * BigInt(mem[ind])) + res;
-    ind++;
-  }
-  res = BigInt(7n ** ind) + res;
-
-  return res;
-}
-
-function decToSep(dec) {
-  let mem = BigInt(dec);
-  let res = "";
-
-  while (mem > 0n) {
-    res = (mem % 7n).toString() + res;
-    mem = mem / 7n;
-  }
-  res = res.slice(1, res.length);
-
-  return res;
-}
+};

@@ -1,0 +1,40 @@
+#app-container{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.gamemode {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+    height: 202px;
+    border: 5px solid black;
+    background-color: blue;
+}
+
+.gamemode-selection {
+    margin-top: 34px;
+    border: 3px solid black;
+    width: 50%;
+    height: 50px;
+    font-size: larger;
+}
+
+.gamemode-selection:hover {
+    cursor: pointer;
+    background-color: lightgray;
+}
+
+.message{
+    text-align: center;
+    font-size: larger;
+}
+
+.heading{
+    text-align: center;
+    transition: font-size 1s ease-out 100ms;
+}
+
+.heading:hover{
+    font-size:3em;
+}
