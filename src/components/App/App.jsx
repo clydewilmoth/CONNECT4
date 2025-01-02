@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { clickHandlerGamemode } from "./AppFunctions.js";
+import { clickHandlerGameMode } from "./AppFunctions.js";
 import "./App.css";
 import Board from "../Board/Board.jsx";
 
@@ -9,32 +9,32 @@ const App = () => {
   const [menu, setMenu] = useState(true);
   self.menu = menu;
   self.setMenu = setMenu;
-  const [gamemode, setGamemode] = useState(0);
-  self.gamemode = gamemode;
-  self.setGamemode = setGamemode;
+  const [gameMode, setGameMode] = useState(0);
+  self.gameMode = gameMode;
+  self.setGameMode = setGameMode;
 
   return (
     <div id="app-container">
       <Heading />
-      <Gamemode />
+      <GameMode />
       <Board />
       <Message />
     </div>
   );
 };
 
-const Gamemode = () => (
+const GameMode = () => (
   <div className="gamemode" hidden={!self.menu}>
     <button
       className="gamemode-selection"
-      onClick={async () => await clickHandlerGamemode(self, 1)}
+      onClick={async () => await clickHandlerGameMode(self, 1)}
     >
       singleplayer
     </button>
     <br />
     <button
       className="gamemode-selection"
-      onClick={async () => await clickHandlerGamemode(self, 2)}
+      onClick={async () => await clickHandlerGameMode(self, 2)}
     >
       multiplayer
     </button>

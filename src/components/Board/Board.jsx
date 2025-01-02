@@ -1,10 +1,11 @@
 import { useState } from "react";
 import {
-  clickHandlerTurn,
   clickHandlerRestart,
   clickHandlerReturn,
   clickHandlerLoadBoard,
   clickHandlerCopyClipboard,
+  clickHandlerBotTurn,
+  clickHandlerPlayerTurn,
 } from "./BoardFunctions.js";
 import "./Board.css";
 import { self } from "../App/App.jsx";
@@ -94,8 +95,12 @@ const Field = ({ row, col, style, disabled }) => {
       col={col}
       style={styling}
       onClick={async () => {
-        await clickHandlerTurn(self, col);
-        if (self.gamemode === 2) {
+        if (self.gameMode === 1) {
+          if ((await clickHandlerPlayerTurn(self, col)) && !self.gameOver) {
+            await clickHandlerBotTurn(self, col, true);
+          }
+        } else {
+          await clickHandlerPlayerTurn(self, col);
           self.currentPlayer === "red"
             ? setHoverColor("hsla(0, 100%, 80%, 1)")
             : setHoverColor("hsla(60, 100%, 80%, 1)");
@@ -134,7 +139,7 @@ const BoardState = () => {
   self.setShowCopy = setShowCopy;
 
   return (
-    <div hidden={self.gamemode !== 2}>
+    <div hidden={self.menu}>
       <div className="board-state">
         <div className="board-state-action">
           <button
@@ -165,13 +170,10 @@ const BoardState = () => {
         </div>
         <input
           className="board-state-number"
-          type="number"
-          min="7"
-          max="6239465226101869857685537024892857210"
-          step="1"
-          value={inputDecimal === 0 ? "" : inputDecimal}
+          type="text"
+          value={inputDecimal}
           name="board-state-input"
-          onChange={(i) => setInputDecimal(Math.floor(i.target.value))}
+          onChange={(i) => setInputDecimal(i.target.value)}
         />
       </div>
     </div>
@@ -188,8 +190,8 @@ const Restart = () => (
   <button
     className="action-button"
     id="restart"
-    hidden={!self.gameOver}
-    onClick={() => clickHandlerRestart(self)}
+    hidden={!self.gameOver || !self.turns > 0}
+    onClick={() => clickHandlerRestart(self, true)}
   >
     &#8634;
   </button>

@@ -127,64 +127,66 @@ const decToSep = (dec) => {
   return res;
 };
 
-export const clickHandlerTurn = async (self, col) => {
-  const iMax = self.gamemode === 1 ? 2 : 1;
+export const clickHandlerTurn = async (self, col, winStringPrefix) => {
+  const memCurrentPlayer = self.currentPlayer;
 
-  for (let i = 0; i < iMax; i++) {
-    const memCurrentPlayer = self.currentPlayer;
+  const worked = await putChip(
+    col,
+    self.colorBoard,
+    self.currentPlayer,
+    self.setColorBoard,
+    self.setCurrentPlayer
+  );
 
-    const worked =
-      i === 0
-        ? await putChip(
-            col,
-            self.colorBoard,
-            self.currentPlayer,
-            self.setColorBoard,
-            self.setCurrentPlayer
-          )
-        : await putChip(
-            botChoice(self.colorBoard),
-            self.colorBoard,
-            self.currentPlayer,
-            self.setColorBoard,
-            self.setCurrentPlayer
-          );
+  if (worked) {
+    await self.setMessage(
+      self.gameMode === 2 ? self.currentPlayer + "'s turn" : ""
+    );
 
-    if (worked) {
-      await self.setMessage("");
+    const win = await checkWin(
+      self.colorBoard,
+      memCurrentPlayer,
+      self.outlineBoard,
+      self.setOutlineBoard
+    );
 
-      const win = await checkWin(
-        self.colorBoard,
-        memCurrentPlayer,
-        self.outlineBoard,
-        self.setOutlineBoard
+    await self.setTurnsMem(col + self.turnsMem);
+    await self.setTurns(self.turns + 1);
+
+    if (win) {
+      await self.setMessage(
+        self.gameMode === 1
+          ? winStringPrefix + " " + " wins!"
+          : winStringPrefix + " " + memCurrentPlayer + " wins!"
       );
-
-      await self.setTurnsMem(col + self.turnsMem);
-      await self.setTurns(self.turns + 1);
-
-      if (win) {
-        const mem = i === 1 ? "bot " : "player ";
-        await self.setMessage(mem + memCurrentPlayer + " wins!");
-        await self.setGameOver(true);
-        break;
-      } else if (self.turns === 42) {
-        await self.setMessage("draw!");
-        await self.setGameOver(true);
-        break;
-      }
-    } else {
-      self.setMessage("column is full!");
-      break;
+      await self.setGameOver(true);
+    } else if (self.turns === 42) {
+      await self.setMessage("draw!");
+      await self.setGameOver(true);
     }
-  }
-
-  if (self.gamemode === 2) {
     await self.setBoardDecimal(sepToDec(self.turnsMem).toString());
+    return true;
+  } else {
+    self.setMessage("column is full!");
+    return false;
   }
 };
 
-export const clickHandlerRestart = async (self) => {
+export const clickHandlerPlayerTurn = async (self, col) => {
+  return await clickHandlerTurn(self, col, "player");
+};
+
+export const clickHandlerBotTurn = async (self, col, random) => {
+  let botCol = 0;
+  if (random) {
+    botCol = botChoice(self.colorBoard);
+  } else {
+    botCol = col;
+  }
+  return await clickHandlerTurn(self, botCol, "bot");
+};
+
+export const clickHandlerRestart = async (self, autoPut) => {
   await self.setTurns(0);
   await self.setGameOver(false);
   await self.setCurrentPlayer("red");
@@ -194,10 +196,13 @@ export const clickHandlerRestart = async (self) => {
   await self.setOutlineBoard(
     Array.from(Array(6), () => new Array(7).fill("0px solid black"))
   );
-  await self.setMessage("");
+  await self.setMessage("red's turn");
   await self.setTurnsMem("");
   await self.setBoardDecimal("");
   await self.setInputDecimal("");
+  if (self.gameMode === 1 && autoPut) {
+    await clickHandlerBotTurn(self, 0, true);
+  }
 };
 
 export const clickHandlerReturn = async (self) => {
@@ -218,12 +223,31 @@ export const clickHandlerReturn = async (self) => {
 };
 
 export const clickHandlerLoadBoard = async (self, dec) => {
-  let sep = decToSep(dec);
-  await clickHandlerRestart(self);
+  let sep = "";
+
+  try {
+    sep = decToSep(dec);
+  } catch {
+    await clickHandlerRestart(self, false);
+    if (self.gameMode === 1) {
+      await clickHandlerBotTurn(self, 0, true);
+    }
+    return;
+  }
+
+  await clickHandlerRestart(self, false);
 
   while (sep.length) {
-    await clickHandlerTurn(self, sep[sep.length - 1]);
-    sep = sep.slice(0, -1);
+    if (sep.length % 2 != 0) {
+      await clickHandlerPlayerTurn(self, sep[sep.length - 1]);
+      sep = sep.slice(0, -1);
+    } else {
+      await clickHandlerBotTurn(self, sep[sep.length - 1], false);
+      sep = sep.slice(0, -1);
+    }
+  }
+  if (self.gameMode === 1 && self.currentPlayer === "red" && !self.gameOver) {
+    await clickHandlerBotTurn(self, 0, true);
   }
 };
 
@@ -232,5 +256,5 @@ export const clickHandlerCopyClipboard = async (self) => {
   self.setShowCopy(true);
   setTimeout(() => {
     self.setShowCopy(false);
-  }, 1500);
+  }, 1000);
 };
