@@ -59,8 +59,9 @@
 
 .board-state{
     grid-area: state;
-    margin-top: auto;
-    margin-bottom: auto;
+    width: 90%;
+    margin: auto;
+    
 }
 
 .board-state-line{
@@ -73,7 +74,7 @@
 }
 
 .board-state-action{
-    margin-right: 5%;
+    margin-right: 2%;
 }
 
 .board-state-action .action-button{
