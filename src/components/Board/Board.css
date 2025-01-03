@@ -1,21 +1,25 @@
 .board-outer {
-    width: 600px;
+    display: grid;
+    grid-template-columns: 560px 500px;
+    grid-template-rows: 480px 160px;
+    grid-template-areas: 
+    "board table"
+    "state action";
+    width: 1060px;
     border: 5px solid black;
     background-color: blue;
     margin-top: 30px;
     margin-left: auto;
     margin-right: auto;
+    padding: 20px;
 }
 
 .board-inner {
-    width: 560px;
-    height: 480px;
+    grid-area: board;
+    width: auto;
+    height: auto;
     display: grid;
     grid-template-columns: repeat(7, auto [col-start]);
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
-    margin-bottom: 20px;
 }
 
 .board-inner .field {
@@ -26,23 +30,22 @@
 }
 
 .board-action{
+    grid-area: action;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 30px;
-    margin-bottom: 30px;
 }
 
 .action-button {
-    width: 17%;
+    width: 160px;
     height: 60px;
     font-size: larger;
     border: 3px solid black;
     background-color: white;
-    margin-left: 3%;
-    margin-right: 3%;
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 #restart{
@@ -55,34 +58,72 @@
 }
 
 .board-state{
+    grid-area: state;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.board-state-line{
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 90%;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 20px;
     margin-top: 10px;
 }
 
 .board-state-action{
-    margin-right: 3%;
+    margin-right: 5%;
+}
+
+.board-state-action .action-button{
+    margin: 0%;
 }
 
 .board-state-number{
     height: 40px;
-    width: 60%;
+    width: 65%;
     border: 3px solid black;
     font-size: medium;
 }
 
-.board-state .board-action{
+.board-state-line .board-action{
     margin-top: 0px;
     margin-bottom: 0px;
 }
 
-.board-state .action-button{
-    width: 100px;
+.board-state-line .action-button{
+    width: 120px;
     height: 48px;
 }
 
+.turns-display{
+    overflow-y: scroll;
+}
+
+table{
+    border-spacing: 10px;
+    width: auto;
+    grid-area: table;
+    margin-left: 10px;
+    margin-right: auto;
+}
+
+thead{
+    font-size: larger;
+}
+
+th, td {
+    padding:10px;
+    width: 100%;
+    border: 3px solid black;
+    background-color: lightgray;
+    text-align: left;
+  }
+
+table .action-button{
+    text-align: left;
+    font-size: medium;
+    width: auto;
+    height: 30px;
+}

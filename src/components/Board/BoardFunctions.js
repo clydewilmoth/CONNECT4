@@ -165,6 +165,9 @@ export const clickHandlerTurn = async (self, col, winStringPrefix) => {
       await self.setGameOver(true);
     }
     await self.setBoardDecimal(sepToDec(self.turnsMem).toString());
+    const memTurnsDisplay = self.turnsDisplay;
+    memTurnsDisplay.push(self.boardDecimal);
+    await self.setTurnsDisplay(memTurnsDisplay);
     return true;
   } else {
     self.setMessage("column is full!");
@@ -187,7 +190,6 @@ export const clickHandlerBotTurn = async (self, col, random) => {
 };
 
 export const clickHandlerRestart = async (self, autoPut) => {
-  await self.setTurns(0);
   await self.setGameOver(false);
   await self.setCurrentPlayer("red");
   await self.setColorBoard(
@@ -197,7 +199,9 @@ export const clickHandlerRestart = async (self, autoPut) => {
     Array.from(Array(6), () => new Array(7).fill("0px solid black"))
   );
   await self.setMessage("red's turn");
+  await self.setTurns(0);
   await self.setTurnsMem("");
+  await self.setTurnsDisplay([]);
   await self.setBoardDecimal("");
   await self.setInputDecimal("");
   if (self.gameMode === 1 && autoPut) {
@@ -218,6 +222,7 @@ export const clickHandlerReturn = async (self) => {
   );
   await self.setMessage("");
   await self.setTurnsMem("");
+  await self.setTurnsDisplay([]);
   await self.setBoardDecimal("");
   await self.setInputDecimal("");
 };

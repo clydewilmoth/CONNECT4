@@ -31,14 +31,6 @@ const Board = () => {
   self.currentPlayer = currentPlayer;
   self.setCurrentPlayer = setCurrentPlayer;
 
-  const [turns, setTurns] = useState(0);
-  self.turns = turns;
-  self.setTurns = setTurns;
-
-  const [turnsMem, setTurnsMem] = useState("");
-  self.turnsMem = turnsMem;
-  self.setTurnsMem = setTurnsMem;
-
   const fields = colorBoard.map((subarr, row) =>
     subarr.map((color, col) => {
       return (
@@ -58,11 +50,14 @@ const Board = () => {
     })
   );
 
+  const display = self.menu ? "none" : "grid";
+
   return (
-    <div className="board-outer" hidden={self.menu}>
+    <div className="board-outer" style={{ display: display }}>
       <div className="board-inner">
         {fields.map((subarr) => subarr.map((field) => field))}
       </div>
+      <TurnDisplay />
       <BoardState />
       <div className="board-action">
         <Return />
@@ -139,8 +134,8 @@ const BoardState = () => {
   self.setShowCopy = setShowCopy;
 
   return (
-    <div hidden={self.menu}>
-      <div className="board-state">
+    <div className="board-state" hidden={self.menu}>
+      <div className="board-state-line">
         <div className="board-state-action">
           <button
             className="action-button"
@@ -159,7 +154,7 @@ const BoardState = () => {
           name="board-state-output"
         />
       </div>
-      <div className="board-state">
+      <div className="board-state-line">
         <div className="board-state-action">
           <button
             className="action-button"
@@ -179,6 +174,59 @@ const BoardState = () => {
     </div>
   );
 };
+
+function TurnDisplay() {
+  const [turns, setTurns] = useState(0);
+  self.turns = turns;
+  self.setTurns = setTurns;
+
+  const [turnsMem, setTurnsMem] = useState("");
+  self.turnsMem = turnsMem;
+  self.setTurnsMem = setTurnsMem;
+
+  const [turnsDisplay, setTurnsDisplay] = useState([]);
+  self.turnsDisplay = turnsDisplay;
+  self.setTurnsDisplay = setTurnsDisplay;
+
+  return (
+    <div className="turns-display">
+      <table>
+        <thead>
+          <tr>
+            <th>turn</th>
+            <th>state</th>
+          </tr>
+        </thead>
+        <tbody>
+          {turnsDisplay.map((element, index) => {
+            return (
+              <tr key={element}>
+                <td
+                  className="action-button"
+                  onClick={() => clickHandlerLoadBoard(self, element)}
+                >
+                  {self.gameMode === 2
+                    ? index % 2 === 0
+                      ? index + 1 + " (red)"
+                      : index + 1 + " (yellow)"
+                    : index % 2 === 0
+                    ? index + 1 + " (bot)"
+                    : index + 1 + " (player)"}
+                </td>
+                <td
+                  className="action-button"
+                  onClick={() => clickHandlerLoadBoard(self, element)}
+                >
+                  {element}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 const Return = () => (
   <button className="action-button" onClick={() => clickHandlerReturn(self)}>
