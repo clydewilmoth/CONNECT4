@@ -166,7 +166,7 @@ export const clickHandlerTurn = async (self, col, winStringPrefix) => {
     }
     await self.setBoardDecimal(sepToDec(self.turnsMem).toString());
     const memTurnsDisplay = self.turnsDisplay;
-    memTurnsDisplay.push(self.boardDecimal);
+    memTurnsDisplay.push(self.boardDecimal + " " + (parseInt(col) + 1));
     await self.setTurnsDisplay(memTurnsDisplay);
     return true;
   } else {

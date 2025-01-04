@@ -194,7 +194,7 @@ function TurnDisplay() {
         <thead>
           <tr>
             <th>turn</th>
-            <th>state</th>
+            <th>column</th>
           </tr>
         </thead>
         <tbody>
@@ -203,21 +203,27 @@ function TurnDisplay() {
               <tr key={element}>
                 <td
                   className="action-button"
-                  onClick={() => clickHandlerLoadBoard(self, element)}
+                  onClick={() =>
+                    clickHandlerLoadBoard(self, element.split(" ")[0])
+                  }
                 >
+                  {index + 1}
+                  <br />
                   {self.gameMode === 2
                     ? index % 2 === 0
-                      ? index + 1 + " (red)"
-                      : index + 1 + " (yellow)"
+                      ? "(red)"
+                      : "(yellow)"
                     : index % 2 === 0
-                    ? index + 1 + " (bot)"
-                    : index + 1 + " (player)"}
+                    ? "(bot)"
+                    : "(player)"}
                 </td>
                 <td
                   className="action-button"
-                  onClick={() => clickHandlerLoadBoard(self, element)}
+                  onClick={() =>
+                    clickHandlerLoadBoard(self, element.split(" ")[0])
+                  }
                 >
-                  {element}
+                  {element.split(" ")[1]}
                 </td>
               </tr>
             );
